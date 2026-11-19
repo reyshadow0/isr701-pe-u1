@@ -2,7 +2,10 @@
 
 Uso (desde la raíz del repo):
     python -m src.experimento.condiciones
-    python -m src.experimento.condiciones --salida data/condiciones_maquina.csv
+    python -m src.experimento.condiciones --salida data/otro_nombre.csv
+
+Por defecto guarda data/condiciones_<equipo>.csv, con el nombre de la
+máquina, para que el CSV de un integrante no pise el de otro.
 
 Escribe un CSV con dos columnas (campo, valor) para que el script de
 análisis lo lea y arme la tabla del informe sin escribirla a mano.
@@ -20,7 +23,7 @@ from importlib import metadata
 from pathlib import Path
 
 # Librerías cuyas versiones interesan para el informe
-PAQUETES = ["grpcio", "grpcio-tools", "protobuf", "pandas", "matplotlib"]
+PAQUETES = ["grpcio", "grpcio-tools", "protobuf", "pandas", "matplotlib", "jinja2"]
 
 
 def nombre_procesador():
@@ -110,13 +113,18 @@ def recolectar():
 
 def main():
     parser = argparse.ArgumentParser(description="Registra las condiciones de la máquina.")
-    parser.add_argument("--salida", default="data/condiciones_maquina.csv",
-                        help="ruta del CSV de salida")
+    parser.add_argument("--salida", default=None,
+                        help="ruta del CSV de salida (por defecto data/condiciones_<equipo>.csv)")
     args = parser.parse_args()
 
     datos = recolectar()
 
-    salida = Path(args.salida)
+    if args.salida:
+        salida = Path(args.salida)
+    else:
+        # El nombre de la máquina va en el archivo, p. ej. data/condiciones_desktop-i6fpv0i.csv
+        equipo = socket.gethostname().lower()
+        salida = Path("data") / f"condiciones_{equipo}.csv"
     salida.parent.mkdir(parents=True, exist_ok=True)
     with open(salida, "w", newline="", encoding="utf-8") as f:
         escritor = csv.writer(f)

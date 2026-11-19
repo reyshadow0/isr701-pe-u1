@@ -30,4 +30,8 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
 ## Quintero Rico Luis David
 
 ## Rivas Piloso Dayver Yahir
+- **Día 18/11** — Cloné el repositorio y me cambié a mi rama `dayver/experimento`. Instalé Python 3.13 y los paquetes del proyecto. Subí el `requirements.txt` con las versiones que acordamos y el script `src/experimento/condiciones.py`, que guarda en un CSV el sistema operativo, el procesador, la RAM, la versión de Python y las versiones de los paquetes. Lo probé en mi PC (commit `ed71bbd`). Después de la revisión de Mario, el CSV lleva el nombre de la máquina (`data/condiciones_<equipo>.csv`) y el script también registra la versión de `jinja2`.
+  - En mi PC no había Python: `python` abría el acceso directo de Microsoft Store. Instalé Python 3.13.17 con `winget` y después `python -m pip install -r requirements.txt`.
+  - Con un nombre fijo, el CSV de condiciones de un integrante pisaba el de otro. Lo resolví poniendo el nombre del equipo en el archivo.
+  - Uso de IA: Claude (Opus 5.5). Lo usé para instalar Python y los paquetes, escribir el script de condiciones y armar esta entrada. Comprobé el script ejecutándolo en mi PC y revisando que los datos coincidieran con los de mi equipo. El commit y el push los hice yo.
 

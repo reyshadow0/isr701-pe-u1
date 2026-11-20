@@ -26,6 +26,11 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
 
 
 ## Loor Suárez Steffanny del Rocío
+**Día 19/11** - Implementé el servidor TCP dentro de src/sockets/server.py. Configuré el nombre del nodo y el puerto mediante argumentos, la recepción de mensajes JSON y la validación de los campos sender, timestamp y message. También agregué el envío de acuses y el uso de hilos para atender conexiones.
+  -Pruebas: ejecuté el nodo A en el puerto 5000 y envié un mensaje desde una segunda terminal, el servidor si recibió el mensaje y respondió con un status: ok. Después probé un timestamp incorrecto y dió un status: error.
+  -Problemas: Al terminar las pruebas, y al querer apagar el servidor este no se apagaba y seguía escuchando conexiones, así que desde otra terminal de PowerShell identifiqué el proceso de Python que utilizaba el puerto 5000 y lo detuve.
+  -Uso de IA: Utilicé ChatGPT (GPT-6) en su versión web, para solicitar sugerencias sobre cómo implementar de mejor manera el servidor TCP. Para ello le di el código que había escrito inicialmente, revisé algunas propuestas de la IA e incorporé manualmente las mejoras siguiendo las recomendaciones de cómo implementarlas, tales como la atención de conexiones mediante hilos y la validación de tipos de datos. Luego de terminar, ejecuté las pruebas locales en mi computadora para comprobar que el servidor recibiera los mensajes y me diera las respuestas.
+    Ejemplo del promt: "Estoy desarrollando un servidor TCP en Python para una práctica de Aplicaciones Distribuidas. Ya tengo esta implementación, sin embargo quiero mejorarla, ¿Qué cambios me recomiendas realizar para que el servidor funcione correctamente como debería y cumpla con los requisitos de la práctica?. Explícame las recomendaciones y cómo podría implementarlas"
 
 ## Quintero Rico Luis David
 

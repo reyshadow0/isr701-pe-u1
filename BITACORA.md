@@ -29,5 +29,10 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
 
 ## Quintero Rico Luis David
 
+- **Día 19/11** — Configuré el entorno de trabajo con Python 3.13.18. Definí el servicio y los mensajes en `messaging.proto`, generé los archivos de gRPC e incorporé el servidor y el cliente. Dejé el nombre del nodo, puerto y destino como argumentos.
+  - Pruebas: inicié el nodo A en el puerto 5000 y envié un mensaje desde el nodo B. Comprobé que el servidor recibió el contenido y el timestamp, y que el cliente recibió el acuse con estado `ok`. Guardé una captura de la ejecución en `docs/figuras/`.
+  - Problemas: tenía Python 3.14 en CachyOS y al intentar instalar uv mediante pacman obtuve un error 404. Instalé uv desde su sitio oficial y creé un entorno virtual con Python 3.13.
+  - Uso de IA: utilicé ChatGPT (GPT-6) para resolver los problemas de instalación, generar una base del código del servidor y cliente y entender su funcionamiento. Comprobé el código generando los módulos del proto, verificando sus importaciones y ejecutando la comunicación desde dos terminales en mi computadora.
+
 ## Rivas Piloso Dayver Yahir
 

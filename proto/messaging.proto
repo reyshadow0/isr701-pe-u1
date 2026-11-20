@@ -1,0 +1,19 @@
+
+syntax = "proto3";
+
+service MessagingService {
+    rpc SendMessage (Request) returns (Response);
+}
+
+message Request {
+    string sender = 1;
+    int64 timestamp = 2;
+    string message = 3;
+}
+
+message Response {
+    string status = 1;
+    string receiver = 2;
+    string detail = 3;
+}
+

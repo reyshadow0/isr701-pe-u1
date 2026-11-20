@@ -24,7 +24,10 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
   - Al probar el comando de `protoc` dio error porque el `.proto` todavía no existía. Queda pendiente hasta que Luis suba `proto/mensajeria.proto` en su rama.
   - Uso de IA: Claude Code. Lo usé para proponer el reparto y el plan por día, redactar los mensajes al grupo y a cada integrante, armar el esqueleto del repositorio, las ramas y la plantilla de `BITACORA.md`, reenviar la invitación de Dayver, probar el comando de gRPC y explicarme el reloj de Lamport y `threading.Lock`. El commit y el push los hice yo, y el reparto lo decidimos en grupo.
 
-
+- **Día 20/11** — A las 10:59 creé `src/comun/lamport.py` y `tests/test_lamport.py`. Hubo tres versiones de `lamport.py`, a las 11:02, 11:10 y 11:14, y cada una corrigió lo que salió en la revisión de la anterior. El módulo lleva el reloj de Lamport con un `threading.Lock` y registra cada envío y cada recepción en un CSV aparte por nodo, mecanismo y corrida. Las 9 pruebas quedaron listas a las 11:14. La versión final las pasa todas, y esas pruebas detectaron los 8 errores que se metieron a propósito en el código. Corrí las pruebas en mi PC y subí los dos archivos a `mario/lamport-analisis`.
+  - Problemas: En las revisiones salieron tres. El primero fue que cada corrida seguía escribiendo en el mismo CSV, con el reloj otra vez desde cero. Por eso los valores se repetían y no había forma de saber a qué envío correspondía cada recepción. Ahora cada corrida tiene un identificador con el nombre del equipo, que va en su propia columna y también en el nombre del archivo. Cada corrida abre un archivo nuevo, y si ese archivo ya existe, el nodo no arranca. El segundo fue que un nodo podía tener dos relojes si el servidor y el cliente corrían como procesos separados. En ese caso, el reloj del cliente no se enteraba de lo que había recibido el servidor. El módulo ya no deja crear un segundo reloj del mismo nodo en la misma corrida. Falta decidir con el grupo que cada nodo corra en un solo proceso. El tercero fue que el campo `nodo` se corregía, pero `origen` y `destino` quedaban sin tocar, así que un mismo nodo podía aparecer escrito de dos formas en el CSV. Ahora cualquier nombre con caracteres no válidos se rechaza con `ValueError`.
+  - Uso de IA: Claude Opus 5.5 en el chat de Claude, y Claude Code con Opus 5.5. Yo generé las tres versiones de `lamport.py`, las 9 pruebas y esta entrada. Claude solo me ayudó a revisar que esté correcto. En Claude Code revisó cada versión, encontró los tres problemas y metió los 8 errores para comprobar las pruebas.
+  
 ## Loor Suárez Steffanny del Rocío
 **Día 19/11** - Implementé el servidor TCP dentro de src/sockets/server.py. Configuré el nombre del nodo y el puerto mediante argumentos, la recepción de mensajes JSON y la validación de los campos sender, timestamp y message. También agregué el envío de acuses y el uso de hilos para atender conexiones.
   -Pruebas: ejecuté el nodo A en el puerto 5000 y envié un mensaje desde una segunda terminal, el servidor si recibió el mensaje y respondió con un status: ok. Después probé un timestamp incorrecto y dió un status: error.
@@ -33,6 +36,11 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
     Ejemplo del promt: "Estoy desarrollando un servidor TCP en Python para una práctica de Aplicaciones Distribuidas. Ya tengo esta implementación, sin embargo quiero mejorarla, ¿Qué cambios me recomiendas realizar para que el servidor funcione correctamente como debería y cumpla con los requisitos de la práctica?. Explícame las recomendaciones y cómo podría implementarlas"
 
 ## Quintero Rico Luis David
+
+- **Día 19/11** — Configuré el entorno de trabajo con Python 3.13.18. Definí el servicio y los mensajes en `messaging.proto`, generé los archivos de gRPC e incorporé el servidor y el cliente. Dejé el nombre del nodo, puerto y destino como argumentos.
+  - Pruebas: inicié el nodo A en el puerto 5000 y envié un mensaje desde el nodo B. Comprobé que el servidor recibió el contenido y el timestamp, y que el cliente recibió el acuse con estado `ok`. Guardé una captura de la ejecución en `docs/figuras/`.
+  - Problemas: tenía Python 3.14 en CachyOS y al intentar instalar uv mediante pacman obtuve un error 404. Instalé uv desde su sitio oficial y creé un entorno virtual con Python 3.13.
+  - Uso de IA: utilicé ChatGPT (GPT-6) para resolver los problemas de instalación, generar una base del código del servidor y cliente y entender su funcionamiento. Comprobé el código generando los módulos del proto, verificando sus importaciones y ejecutando la comunicación desde dos terminales en mi computadora.
 
 ## Rivas Piloso Dayver Yahir
 

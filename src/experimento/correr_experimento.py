@@ -31,6 +31,12 @@ El programa de cada nodo es src/sockets/client.py y src/grpc/client_grpc.py.
 Un nodo es UN proceso: arranca su servidor en un hilo, usa el mismo programa
 como cliente y tiene UN solo RelojLamport (src/comun/lamport.py) para los dos.
 
+Todo lo que sigue, salvo el transporte, ya está en src/comun/nodo.py (argumentos,
+ronda de las dos fichas, cuándo terminar, medición y CSV de latencia). El programa
+del mecanismo solo pone el servidor, que llama a comun.al_recibir(...) antes del
+acuse, y una función enviar(destino, timestamp, texto); después llama a
+sys.exit(comun.correr(enviar)). Ver el ejemplo al inicio de ese archivo.
+
     python -m src.sockets.client --nodo nodo-A --puerto 5000 --corrida n3-r1
         --equipo <equipo> --pares nodo-A=5000,nodo-B=5001,nodo-C=5002 --modo <modo> ...
 

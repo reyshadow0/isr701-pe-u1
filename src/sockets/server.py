@@ -3,9 +3,12 @@ import argparse
 import json
 import socket
 import threading
+from src.comun.lamport import RelojLamport
+
+bloqueo_consola = threading.Lock()
 
 
-def atender_cliente(conexion, nodo):
+def atender_cliente(conexion, nodo, reloj_lamport):
     """Recibe un mensaje JSON y devuelve un acuse."""
 
     with conexion:
@@ -32,11 +35,7 @@ def atender_cliente(conexion, nodo):
 
             if not isinstance(mensaje.get("message"), str):
                 raise ValueError("message debe ser texto")
-
-            print(
-                f"[{nodo}] Mensaje de {mensaje['sender']} "
-                f"(Lamport recibido: {reloj})"
-            )
+            reloj_lamport.recibir(reloj, mensaje["sender"])
             respuesta = {
                 "status": "ok",
                 "receiver": nodo
@@ -57,11 +56,20 @@ def atender_cliente(conexion, nodo):
         try:
             datos_respuesta = json.dumps(respuesta) + "\n"
             conexion.sendall(datos_respuesta.encode("utf-8"))
+
+            if respuesta["status"] == "ok":
+                with bloqueo_consola:
+                    print(
+                        f"[{nodo}] Mensaje de {mensaje['sender']} "
+                        f"(Lamport recibido: {reloj})"
+                    )
+
         except OSError:
-            print(f"[{nodo}] No se pudo enviar el acuse")
+            with bloqueo_consola:
+                print(f"[{nodo}] No se pudo enviar el acuse")
 
 
-def iniciar_servidor(nodo, puerto):
+def iniciar_servidor(nodo, puerto, reloj_lamport):
     """Inicia el servidor TCP del nodo indicado."""
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as servidor:
@@ -73,20 +81,24 @@ def iniciar_servidor(nodo, puerto):
 
         servidor.bind(("127.0.0.1", puerto))
         servidor.listen()
+        servidor.settimeout(0.5)
 
         print(f"[{nodo}] Servidor TCP en localhost:{puerto}")
         print("Presiona Ctrl+C para detenerlo")
 
         try:
             while True:
-                conexion, _ = servidor.accept()
-
-                hilo = threading.Thread(
-                    target=atender_cliente,
-                    args=(conexion, nodo),
-                    daemon=True
-                )
-                hilo.start()
+                try:
+                    conexion, _ = servidor.accept()
+                except socket.timeout:
+                    pass
+                else:
+                    hilo = threading.Thread(
+                        target=atender_cliente,
+                        args=(conexion, nodo, reloj_lamport),
+                        daemon=True
+                    )
+                    hilo.start()
 
         except KeyboardInterrupt:
             print(f"\n[{nodo}] Servidor detenido")
@@ -99,6 +111,19 @@ if __name__ == "__main__":
 
     parser.add_argument("--nodo", required=True)
     parser.add_argument("--puerto", type=int, required=True)
+    parser.add_argument("--corrida", required=True)
+    parser.add_argument("--equipo", default=None)
 
     args = parser.parse_args()
-    iniciar_servidor(args.nodo, args.puerto)
+
+    reloj_lamport = RelojLamport(
+        nodo=args.nodo,
+        mecanismo="sockets",
+        corrida=args.corrida,
+        equipo=args.equipo
+    )
+
+    try:
+        iniciar_servidor(args.nodo, args.puerto, reloj_lamport)
+    finally:
+        reloj_lamport.cerrar()

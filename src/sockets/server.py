@@ -8,65 +8,74 @@ from src.comun.lamport import RelojLamport
 bloqueo_consola = threading.Lock()
 
 
-def atender_cliente(conexion, nodo, reloj_lamport):
-    """Recibe un mensaje JSON y devuelve un acuse."""
+def atender_cliente(conexion, nodo, reloj_lamport, comun=None):
+    """Recibe varios mensajes JSON por una misma conexión TCP."""
 
     with conexion:
-        conexion.settimeout(5)
+        conexion.settimeout(None)
 
         try:
             with conexion.makefile("rb") as entrada:
-                datos = entrada.readline(1024 * 1024)
+                while True:
+                    datos = entrada.readline(1024 * 1024)
 
-            if not datos or not datos.endswith(b"\n"):
-                raise ValueError("Mensaje incompleto")
+                    if not datos:
+                        break
+                    try:
+                        if not datos.endswith(b"\n"):
+                            raise ValueError("Mensaje incompleto")
 
-            mensaje = json.loads(datos.decode("utf-8"))
+                        mensaje = json.loads(datos.decode("utf-8"))
 
-            if not isinstance(mensaje, dict):
-                raise ValueError("El mensaje debe ser un objeto JSON")
+                        if not isinstance(mensaje, dict):
+                            raise ValueError("El mensaje debe ser un objeto JSON")
 
-            if not isinstance(mensaje.get("sender"), str):
-                raise ValueError("sender debe ser texto")
+                        if not isinstance(mensaje.get("sender"), str):
+                            raise ValueError("sender debe ser texto")
 
-            reloj = mensaje.get("timestamp")
-            if type(reloj) is not int or reloj < 0:
-                raise ValueError("timestamp debe ser un entero no negativo")
+                        reloj = mensaje.get("timestamp")
+                        if type(reloj) is not int or reloj < 0:
+                            raise ValueError("timestamp debe ser un entero no negativo")
 
-            if not isinstance(mensaje.get("message"), str):
-                raise ValueError("message debe ser texto")
-            reloj_lamport.recibir(reloj, mensaje["sender"])
-            respuesta = {
-                "status": "ok",
-                "receiver": nodo
-            }
+                        if not isinstance(mensaje.get("message"), str):
+                            raise ValueError("message debe ser texto")
+                        if comun is not None:
+                            comun.al_recibir(
+                                mensaje["sender"],
+                                reloj,
+                                mensaje["message"]
+                            )
+                        else:
+                            reloj_lamport.recibir(
+                                reloj,
+                                mensaje["sender"]
+                            )
+                        respuesta = {
+                            "status": "ok",
+                            "receiver": nodo
+                        }
 
-        except (
-            ValueError,
-            UnicodeDecodeError,
-            socket.timeout,
-            OSError
-        ) as error:
-            respuesta = {
-                "status": "error",
-                "receiver": nodo,
-                "detail": str(error)
-            }
+                    except (ValueError, UnicodeDecodeError) as error:
+                        respuesta = {
+                            "status": "error",
+                            "receiver": nodo,
+                            "detail": str(error)
+                        }
 
-        try:
-            datos_respuesta = json.dumps(respuesta) + "\n"
-            conexion.sendall(datos_respuesta.encode("utf-8"))
+                    datos_respuesta = json.dumps(respuesta) + "\n"
+                    conexion.sendall(datos_respuesta.encode("utf-8"))
 
-            if respuesta["status"] == "ok":
-                with bloqueo_consola:
-                    print(
-                        f"[{nodo}] Mensaje de {mensaje['sender']} "
-                        f"(Lamport recibido: {reloj})"
-                    )
+                    if respuesta["status"] == "ok":
+                        with bloqueo_consola:
+                            print(
+                                f"[{nodo}] Mensaje de "
+                                f"{mensaje['sender']} "
+                                f"(Lamport recibido: {reloj})"
+                            )
 
-        except OSError:
+        except (socket.timeout, OSError) as error:
             with bloqueo_consola:
-                print(f"[{nodo}] No se pudo enviar el acuse")
+                print(f"[{nodo}] Conexión finalizada: {error}")
 
 
 def iniciar_servidor(nodo, puerto, reloj_lamport):
@@ -103,6 +112,55 @@ def iniciar_servidor(nodo, puerto, reloj_lamport):
         except KeyboardInterrupt:
             print(f"\n[{nodo}] Servidor detenido")
 
+def iniciar_servidor_nodo(comun):
+    """Inicia el servidor TCP para un nodo del experimento."""
+
+    servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    servidor.setsockopt(
+        socket.SOL_SOCKET,
+        socket.SO_REUSEADDR,
+        1
+    )
+
+    try:
+        servidor.bind(("127.0.0.1", comun.args.puerto))
+        servidor.listen()
+        servidor.settimeout(0.5)
+
+        def aceptar_conexiones():
+            while True:
+                try:
+                    conexion, _ = servidor.accept()
+
+                except socket.timeout:
+                    continue
+
+                except OSError:
+                    break
+
+                hilo = threading.Thread(
+                    target=atender_cliente,
+                    args=(
+                        conexion,
+                        comun.nombre,
+                        comun.reloj,
+                        comun
+                    ),
+                    daemon=True
+                )
+                hilo.start()
+
+        hilo_servidor = threading.Thread(
+            target=aceptar_conexiones,
+            daemon=True
+        )
+        hilo_servidor.start()
+
+        return servidor
+
+    except Exception:
+        servidor.close()
+        raise
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

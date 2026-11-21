@@ -122,8 +122,9 @@ def main():
     if args.salida:
         salida = Path(args.salida)
     else:
-        # El nombre de la máquina va en el archivo, p. ej. data/condiciones_desktop-i6fpv0i.csv
-        equipo = socket.gethostname().lower()
+        # El nombre de la máquina va tal cual, igual que en los CSV de eventos de lamport.py,
+        # p. ej. data/condiciones_DESKTOP-I6FPV0I.csv
+        equipo = socket.gethostname()
         salida = Path("data") / f"condiciones_{equipo}.csv"
     salida.parent.mkdir(parents=True, exist_ok=True)
     with open(salida, "w", newline="", encoding="utf-8") as f:

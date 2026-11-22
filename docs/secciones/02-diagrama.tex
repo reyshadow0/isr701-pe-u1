@@ -1,0 +1,31 @@
+\subsection{Diagrama de arquitectura}
+
+La arquitectura que se ha desarrollado permite comparar la comunicación
+entre procesos mediante sockets TCP y gRPC, cada nodo se ejecuta
+como un proceso independiente y dispone de un cliente, un servidor
+y un reloj lógico de Lamport compartido entre sus componentes.
+
+Los nodos se ejecutan en el entorno local (\texttt{localhost}),
+utilizando los puertos 5000, 5001, 5002 y 5003, los tres primeros
+participan en el escenario principal, mientras que el cuarto
+se incorpora cuando se realizan pruebas con cuatro nodos.
+
+Esta misma arquitectura se utiliza para evaluar ambos mecanismos
+de comunicación, pero las ejecuciones de TCP y gRPC se realizan
+por separado, lo cual permite comparar su comportamiento sin
+mantener ambos mecanismos activos simultáneamente.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \input{figuras/arquitectura-pe-u1-tikz}
+    }
+    \caption{Arquitectura de comunicación entre procesos mediante TCP y gRPC. Fuente: Elaboración propia}
+    \label{fig:arquitectura-pe-u1}
+\end{figure}
+
+En la Figura~\ref{fig:arquitectura-pe-u1}, las conexiones
+continuas bidireccionales representan los enlaces principales entre los nodos,
+mientras que la conexión discontinua bidireccional identifica el escenario
+adicional de cuatro nodos. Esta última no representa
+comunicación asíncrona.

@@ -1,0 +1,82 @@
+% Arquitectura de comunicación distribuida: TCP y gRPC
+% Requiere \usepackage{tikz} y \usetikzlibrary{arrows.meta,positioning,fit}
+\shorthandoff{<>}
+\begin{tikzpicture}[
+    >=Stealth,
+    font=\scriptsize,
+    nodo/.style={
+        draw,
+        rounded corners=3pt,
+        thick,
+        minimum width=4.2cm,
+        minimum height=2.0cm,
+        align=center,
+        fill=white
+    },
+    enlace/.style={thick, {Stealth}-{Stealth}},
+    opcional/.style={thick, dashed, {Stealth}-{Stealth}}
+]
+
+\node[nodo] (A) at (0,0) {
+    \textbf{Nodo A}\\
+    \texttt{localhost:5000}\\[3pt]
+    Cliente\\
+    Servidor\\
+    Reloj de Lamport compartido
+};
+
+\node[nodo] (B) at (8,0) {
+    \textbf{Nodo B}\\
+    \texttt{localhost:5001}\\[3pt]
+    Cliente\\
+    Servidor\\
+    Reloj de Lamport compartido
+};
+
+\node[nodo] (C) at (0,-5) {
+    \textbf{Nodo C}\\
+    \texttt{localhost:5002}\\[3pt]
+    Cliente\\
+    Servidor\\
+    Reloj de Lamport compartido
+};
+
+\node[nodo] (D) at (8,-5) {
+    \textbf{Nodo D}\\
+    \texttt{localhost:5003}\\[3pt]
+    Cliente\\
+    Servidor\\
+    Reloj de Lamport compartido\\
+    \emph{Solo escenario de 4 nodos}
+};
+
+\draw[enlace] (A.east) --
+    node[above, align=center] {TCP / gRPC\\(ejecuciones separadas)}
+    (B.west);
+
+\draw[enlace] (A.south) --
+    node[right, pos=0.5, xshift=2mm, align=center]
+    {TCP / gRPC\\(ejecuciones separadas)}
+    (C.north);
+
+\draw[enlace] (B.south west) --
+    node[right, pos=0.55, align=center] {TCP / gRPC\\(ejecuciones separadas)}
+    (C.north east);
+
+\draw[opcional] (C.east) --
+    node[below, align=center] {Escenario de 4 nodos\\TCP / gRPC}
+    (D.west);
+
+\begin{scope}[on background layer]
+    \node[
+        draw,
+        dashed,
+        rounded corners=5pt,
+        inner sep=12pt,
+        fit=(A)(B)(C)(D),
+        label={[font=\small]above:Entorno local (localhost)}
+    ] {};
+\end{scope}
+
+\end{tikzpicture}
+\shorthandon{<>}

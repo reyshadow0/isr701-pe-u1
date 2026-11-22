@@ -1,0 +1,11 @@
+corrida,mecanismo,nodo,evento,reloj,reloj_emisor,origen,destino,hora_real
+mcastro_n4-r3,grpc,nodo-B,recepcion,2,1,nodo-A,nodo-B,1795365721.901516
+mcastro_n4-r3,grpc,nodo-B,envio,3,,nodo-B,nodo-C,1795365721.901576
+mcastro_n4-r3,grpc,nodo-B,recepcion,6,5,nodo-A,nodo-B,1795365721.906909
+mcastro_n4-r3,grpc,nodo-B,envio,7,,nodo-B,nodo-C,1795365721.906947
+mcastro_n4-r3,grpc,nodo-B,recepcion,10,9,nodo-A,nodo-B,1795365721.907639
+mcastro_n4-r3,grpc,nodo-B,envio,11,,nodo-B,nodo-C,1795365721.907665
+mcastro_n4-r3,grpc,nodo-B,recepcion,14,13,nodo-A,nodo-B,1795365721.908211
+mcastro_n4-r3,grpc,nodo-B,envio,15,,nodo-B,nodo-C,1795365721.908296
+mcastro_n4-r3,grpc,nodo-B,recepcion,18,17,nodo-A,nodo-B,1795365721.908751
+mcastro_n4-r3,grpc,nodo-B,envio,19,,nodo-B,nodo-C,1795365721.908766

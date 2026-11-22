@@ -1,0 +1,16 @@
+% Generado por analysis/analizar.py. No editar a mano.
+% Latencias en ms (RTT). Msg/s: media de las repeticiones.
+\begin{tabular}{llrrrrrrrrr}
+\toprule
+Mecanismo & Clientes & Tamaño & Rep. & Envíos & Media & Mediana & Desv. est. & P95 & Msg/s & IC 95\,\% msg/s \\
+\midrule
+Sockets TCP + JSON & 1 cliente & 100 B & 5 & 500 & 0.161 & 0.045 & 1.421 & 0.103 & 7747.0 & $\pm$4889.1 \\
+gRPC + Protobuf & 1 cliente & 100 B & 5 & 500 & 0.358 & 0.291 & 0.616 & 0.365 & 2639.8 & $\pm$88.1 \\
+Sockets TCP + JSON & 1 cliente & 10 KB & 5 & 500 & 0.157 & 0.072 & 1.117 & 0.152 & 6991.9 & $\pm$2843.9 \\
+gRPC + Protobuf & 1 cliente & 10 KB & 5 & 500 & 0.371 & 0.303 & 0.598 & 0.408 & 2557.0 & $\pm$61.9 \\
+Sockets TCP + JSON & 3 clientes & 100 B & 5 & 1500 & 0.152 & 0.056 & 1.171 & 0.132 & 12306.1 & $\pm$4831.0 \\
+gRPC + Protobuf & 3 clientes & 100 B & 5 & 1500 & 0.426 & 0.366 & 0.579 & 0.499 & 5635.9 & $\pm$782.8 \\
+Sockets TCP + JSON & 3 clientes & 10 KB & 5 & 1500 & 0.183 & 0.086 & 1.198 & 0.170 & 10992.8 & $\pm$3992.1 \\
+gRPC + Protobuf & 3 clientes & 10 KB & 5 & 1500 & 0.461 & 0.396 & 0.599 & 0.531 & 5790.6 & $\pm$577.8 \\
+\bottomrule
+\end{tabular}

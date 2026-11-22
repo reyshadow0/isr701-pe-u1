@@ -10,7 +10,29 @@
   \textbf{Integrante} & \textbf{Herramienta} & \textbf{Versión} & \textbf{Para qué se usó} & \textbf{Cómo se verificó lo obtenido} \\
   \midrule
   \endhead
-   & & & & \\
+  Castro Coello Mario Sebastián & Claude Code & Opus 5.5 & 18/11: proponer el reparto y el plan por día, redactar los mensajes al grupo, armar el esqueleto del repositorio, las ramas y la plantilla de la bitácora, y explicar el reloj de Lamport y \texttt{threading.Lock}. & El reparto se decidió en grupo y los tres integrantes lo aceptaron. El commit y el push los hizo Mario. \\
+  \midrule
+  Castro Coello Mario Sebastián & Claude (chat) y Claude Code & Opus 5.5 & 20/11: revisar las tres versiones de \texttt{lamport.py}; encontró tres problemas y metió 8 errores a propósito para comprobar las pruebas. & Mario corrió las 9 pruebas en su PC; la versión final las pasa y las pruebas detectan los 8 errores. \\
+  \midrule
+  Castro Coello Mario Sebastián & Claude (app conectada al repositorio) & Opus 5.5 & 22/11: escribir \texttt{analysis/analizar.py} y guiar los comandos de la corrida oficial, del \texttt{SHA256SUMS} y de las capturas. & Mario ejecutó todo en su equipo: 78 corridas en \texttt{ok}, \texttt{SHA256SUMS} comprobado (336 archivos) y salidas del análisis revisadas contra el criterio de la sección~1. \\
+  \midrule
+  Castro Coello Mario Sebastián & Claude (app conectada al repositorio) & Opus 5.5 & 22/11: revisar los datos; encontró que el análisis contaba las corridas de prueba, que la ronda con dos fichas da 2, 6 y 8 intercambios y los 0,5~s de arranque en Lamport. & Mario revisó los CSV y los registros de la corrida \texttt{n2-r5}; la hipótesis se dejó como estaba escrita. \\
+  \midrule
+  Castro Coello Mario Sebastián & Claude (app conectada al repositorio) & Opus 5.5 & 22/11: buscar referencias candidatas con DOI para la discusión. & Datos bajados con \texttt{doi2bib.ps1} y contrastados con el script \texttt{verificar-\allowbreak referencias.ps1}; Mario leyó los resúmenes de las obras citadas. \\
+  \midrule
+  Loor Suárez Steffanny del Rocío & ChatGPT (web) & GPT-6 & 19/11: sugerencias para mejorar el servidor TCP (atención con hilos y validación de tipos). & Incorporó los cambios a mano y probó el servidor con mensajes válidos e inválidos en su PC. \\
+  \midrule
+  Loor Suárez Steffanny del Rocío & ChatGPT (web) & GPT-6 & 20/11: revisar las observaciones del \emph{pull request} (tiempo de espera en \texttt{accept()} y orden del acuse). & Probó Ctrl+C, el acuse y 10 clientes a la vez en PowerShell. \\
+  \midrule
+  Loor Suárez Steffanny del Rocío & ChatGPT (web) & GPT-6 & 21/11: orientación para integrar cliente y servidor TCP con la interfaz común y analizar errores de conexión. & Corrió tres nodos con 20 intercambios y el verificador de Lamport (100\,\% de recepciones válidas). \\
+  \midrule
+  Quintero Rico Luis David & ChatGPT & GPT-6 & 19/11: resolver la instalación, generar una base del servidor y cliente gRPC y entender su funcionamiento. & Generó los módulos del \texttt{.proto}, revisó las importaciones y probó la comunicación entre dos terminales. \\
+  \midrule
+  Quintero Rico Luis David & ChatGPT & GPT-6 & 22/11: revisar la integración de gRPC con \texttt{NodoComun} y la estructura del cliente y el servidor. & Pasaron las 40 pruebas unitarias y corrió el script de experimentos en su PC. \\
+  \midrule
+  Rivas Piloso Dayver Yahir & Claude & Opus 5.5 & 18/11: comandos de instalación en Windows y estructura de \texttt{condiciones.py}. & Instaló el entorno, ejecutó el script y comprobó que los datos coincidieran con su equipo. \\
+  \midrule
+  Rivas Piloso Dayver Yahir & Claude & Opus 5.5 & 20/11: estructurar \texttt{correr\_experimento.py}, \texttt{verificar\_lamport.py}, \texttt{src/comun/nodo.py} y sus pruebas. & Probó el flujo con un nodo simulado y pruebas de hilos en memoria, y corrió las 24 pruebas del repositorio. \\
   \bottomrule
 \end{longtable}
 }

@@ -1,0 +1,14 @@
+% Generado por analysis/analizar.py desde analysis/lamport_convergencia.csv.
+% No editar a mano.
+\begin{tabular}{llrrrrrrr}
+\toprule
+Mecanismo & Nodos & Corridas & Convergen & Intercambios & Mín. (ms) & Mediana (ms) & Máx. (ms) & $>$100 ms \\
+\midrule
+Sockets TCP + JSON & 2 & 5 & 5 & 2 & 4,7 & 15,6 & 513,9 & 1 \\
+Sockets TCP + JSON & 3 & 5 & 5 & 6 & 13,3 & 29,3 & 532,0 & 2 \\
+Sockets TCP + JSON & 4 & 5 & 5 & 8 & 30,4 & 518,7 & 563,6 & 4 \\
+gRPC + Protobuf & 2 & 5 & 5 & 2 & 5,6 & 5,7 & 6,3 & 0 \\
+gRPC + Protobuf & 3 & 5 & 5 & 6 & 11,0 & 11,2 & 515,1 & 1 \\
+gRPC + Protobuf & 4 & 5 & 5 & 8 & 11,6 & 13,0 & 21,9 & 0 \\
+\bottomrule
+\end{tabular}

@@ -27,8 +27,10 @@ Genera, sin nada hecho a mano:
     docs/tablas/latencia_resumen.csv/.tex   resumen por mecanismo, escenario y tamaño
     docs/tablas/hipotesis.csv/.tex          criterio de decisión de H1, H2 y H3
     docs/tablas/condiciones.tex             condiciones de la máquina (si hay CSV)
-    docs/figuras/boxplot_latencia.png       RTT de todos los envíos
-    docs/figuras/barras_intervalos.png      mediana y mensajes/s con IC del 95 %
+    docs/tablas/convergencia.tex            convergencia de Lamport (si existe
+                                            analysis/lamport_convergencia.csv)
+    docs/figuras/boxplot.png                RTT de todos los envíos (300 DPI)
+    docs/figuras/barras.png                 mediana y mensajes/s con IC del 95 % (300 DPI)
 
 Criterio de decisión (sección 1 del informe):
   * Diferencia real en una métrica: los rangos de los valores por repetición de
@@ -240,7 +242,7 @@ def hipotesis(reps):
 
 
 def rango(xs):
-    return f"[{min(xs):.2f}; {max(xs):.2f}]" if xs else "[sin datos]"
+    return f"[{num(min(xs), 2)}; {num(max(xs), 2)}]" if xs else "[sin datos]"
 
 
 # ----------------------------------------------------------------- tablas LaTeX
@@ -250,7 +252,8 @@ def escapar(s):
 
 
 def num(x, dec):
-    return "--" if pd.isna(x) else f"{x:.{dec}f}"
+    """Número con coma decimal, como se escribe en el informe."""
+    return "--" if pd.isna(x) else f"{x:.{dec}f}".replace(".", ",")
 
 
 def tabla_latex(encabezado, filas, formato):
@@ -282,7 +285,31 @@ def latex_hipotesis(hip):
              for _, h in hip.iterrows()]
     return ("% Generado por analysis/analizar.py. No editar a mano.\n"
             + tabla_latex(["Hip.", "Condición", "Detalle", "¿Se cumple?"], filas,
-                          "l l p{8cm} l"))
+                          r">{\raggedright\arraybackslash}p{0.8cm} >{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{8.6cm} l"))
+
+
+def latex_convergencia(ruta):
+    """Tabla de convergencia de Lamport a partir de lo que guardó verificar_lamport.py."""
+    ruta = Path(ruta)
+    if not ruta.exists():
+        print(f"Aviso: no existe {ruta}; corre antes python -m analysis.verificar_lamport")
+        return None
+    df = pd.read_csv(ruta)
+    df["ms"] = df["segundos"] * 1000
+    filas = []
+    for (mec, nodos), g in df.groupby(["mecanismo", "nodos"]):
+        conv = g[g["converge"]]
+        inter = sorted(set(conv["intercambios"].astype(int)))
+        filas.append((MECANISMOS.index(mec), nodos, [
+            NOMBRE_MEC[mec], str(nodos), str(len(g)), str(len(conv)),
+            ", ".join(map(str, inter)) or "--",
+            num(conv["ms"].min(), 1), num(conv["ms"].median(), 1), num(conv["ms"].max(), 1),
+            str(int((conv["ms"] > 100).sum()))]))
+    filas = [f for *_, f in sorted(filas, key=lambda x: (x[0], x[1]))]
+    encabezado = ["Mecanismo", "Nodos", "Corridas", "Convergen", "Intercambios",
+                  "Mín. (ms)", "Mediana (ms)", "Máx. (ms)", r"$>$100 ms"]
+    return ("% Generado por analysis/analizar.py desde analysis/lamport_convergencia.csv.\n"
+            "% No editar a mano.\n" + tabla_latex(encabezado, filas, "llrrrrrrr"))
 
 
 def latex_condiciones(datos):
@@ -343,7 +370,7 @@ def figura_boxplot(envios, ruta):
     ejes[0][0].set_ylabel("RTT (ms, escala logarítmica)")
     fig.suptitle("Latencia de ida y vuelta por envío (sin calentamiento)", fontsize=11)
     fig.tight_layout()
-    fig.savefig(ruta, dpi=200)
+    fig.savefig(ruta, dpi=300)
     plt.close(fig)
 
 
@@ -374,7 +401,7 @@ def figura_barras(res, ruta):
     ejes[0].legend(frameon=False, fontsize=9)
     fig.suptitle("Media de las repeticiones con intervalo de confianza del 95 %", fontsize=11)
     fig.tight_layout()
-    fig.savefig(ruta, dpi=200)
+    fig.savefig(ruta, dpi=300)
     plt.close(fig)
 
 
@@ -384,6 +411,8 @@ def main():
     parser = argparse.ArgumentParser(description="Estadísticas y gráficos de latencia.")
     parser.add_argument("--datos", default="data", help="carpeta con los CSV crudos")
     parser.add_argument("--salida", default="docs", help="carpeta del informe")
+    parser.add_argument("--convergencia", default="analysis/lamport_convergencia.csv",
+                        help="CSV de convergencia que escribe verificar_lamport.py")
     args = parser.parse_args()
 
     envios, archivos = cargar(args.datos)
@@ -406,12 +435,15 @@ def main():
     hip.to_csv(tablas / "hipotesis.csv", index=False)
     (tablas / "latencia_resumen.tex").write_text(latex_resumen(res), encoding="utf-8")
     (tablas / "hipotesis.tex").write_text(latex_hipotesis(hip), encoding="utf-8")
+    conv = latex_convergencia(args.convergencia)
+    if conv:
+        (tablas / "convergencia.tex").write_text(conv, encoding="utf-8")
     cond = latex_condiciones(args.datos)
     if cond:
         (tablas / "condiciones.tex").write_text(cond, encoding="utf-8")
 
-    figura_boxplot(envios, figuras / "boxplot_latencia.png")
-    figura_barras(res, figuras / "barras_intervalos.png")
+    figura_boxplot(envios, figuras / "boxplot.png")
+    figura_barras(res, figuras / "barras.png")
 
     with pd.option_context("display.width", 200, "display.max_columns", 20):
         print("\nResumen (RTT en ms):")

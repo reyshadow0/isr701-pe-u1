@@ -57,6 +57,12 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
   - Pruebas: inicié el nodo A en el puerto 5000 y envié un mensaje desde el nodo B. Comprobé que el servidor recibió el contenido y el timestamp, y que el cliente recibió el acuse con estado `ok`. Guardé una captura de la ejecución en `docs/figuras/`.
   - Problemas: tenía Python 3.14 en CachyOS y al intentar instalar uv mediante pacman obtuve un error 404. Instalé uv desde su sitio oficial y creé un entorno virtual con Python 3.13.
   - Uso de IA: utilicé ChatGPT (GPT-6) para resolver los problemas de instalación, generar una base del código del servidor y cliente y entender su funcionamiento. Comprobé el código generando los módulos del proto, verificando sus importaciones y ejecutando la comunicación desde dos terminales en mi computadora.
+  
+- **Día 22/11** — Adapté el servidor y cliente gRPC para trabajar con NodoComun y el reloj de Lamport del equipo. También agregué la validación de mensajes y la reutilización de canales por destino, evitando abrir una conexión nueva en cada envío.
+  - Pruebas: pasaron las 40 pruebas unitarias. Ejecuté los intercambios de Lamport con 2, 3 y 4 nodos, y las 8 corridas de latencia con mensajes de 100 bytes y 10 KB, tanto secuenciales como concurrentes. Se generó latency_grpc.csv con 1600 registros.
+  - Problemas: al principio los nodos fallaron porque no encontraban el módulo grpc. Revisé el entorno virtual y las dependencias, comprobé que grpcio estaba disponible y repetí las pruebas hasta completarlas correctamente.
+  - Uso de IA: utilicé ChatGPT (GPT-6) para revisar la integración de gRPC con NodoComun y corregir la estructura del cliente y servidor. Comprobé los cambios ejecutando las pruebas unitarias y el script de experimentos en mi computadora.
+
 
 
 ## Rivas Piloso Dayver Yahir

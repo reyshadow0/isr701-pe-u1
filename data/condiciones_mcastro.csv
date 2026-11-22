@@ -1,0 +1,18 @@
+campo,valor
+fecha_hora,2026-11-22T11:40:39
+equipo,ReyShadow
+sistema_operativo,Windows 11
+version_so,10.0.26300
+arquitectura,AMD64
+procesador,Intel(R) Core(TM) i7-14700
+nucleos_logicos,28
+ram_gb,63.7
+python,3.13.15
+implementacion_python,CPython
+modo_nodos,"procesos en localhost (puertos 5000, 5001, 5002)"
+version_grpcio,1.85.3
+version_grpcio-tools,1.85.3
+version_protobuf,7.36.2
+version_pandas,3.0.2
+version_matplotlib,3.11.2
+version_jinja2,3.1.6

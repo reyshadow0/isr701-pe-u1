@@ -13,8 +13,8 @@ datos y se contarían dos veces.
 Unidad de análisis: la repetición. Una repetición es una corrida (columna
 corrida = <equipo>_<etiqueta>) de un mecanismo. Con tres clientes se juntan los
 300 envíos de la corrida. La repetición r0 es el calentamiento y se descarta.
-Si la etiqueta no termina en -rN (corridas de prueba), la corrida cuenta como
-una repetición y se avisa en pantalla.
+Las corridas cuya etiqueta no termina en -rN son pruebas: si ya hay corridas
+oficiales se ignoran; si solo hay pruebas, cada una cuenta como una repetición.
 
 Por repetición calcula: media, mediana, desviación estándar (muestral), p95
 (interpolación lineal) del RTT en ms y mensajes por segundo. Los mensajes por
@@ -102,8 +102,14 @@ def cargar(datos):
 
 
 def descartar_calentamiento(envios):
-    prueba = envios.loc[envios["repeticion"].isna(), "corrida"].unique()
-    if len(prueba):
+    es_prueba = envios["repeticion"].isna()
+    prueba = envios.loc[es_prueba, "corrida"].unique()
+    if len(prueba) and not es_prueba.all():
+        # Ya hay corridas oficiales (-rN): las de prueba no entran al análisis
+        print(f"Se ignoran {len(prueba)} corrida(s) de prueba sin -rN: "
+              f"{', '.join(sorted(prueba))}")
+        envios = envios[~es_prueba]
+    elif len(prueba):
         print(f"Aviso: {len(prueba)} corrida(s) sin -rN en la etiqueta; cada una "
               f"cuenta como una repetición: {', '.join(sorted(prueba))}")
     calentamiento = envios["repeticion"] == 0

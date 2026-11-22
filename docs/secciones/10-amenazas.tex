@@ -1,48 +1,10 @@
 \subsection{Amenazas a la validez}
-% Sección 10 (Dayver). Mario pide: solo enumerar y proponer cómo se evitaría,
-% porque la explicación está en la sección 8. Usa \ref para remitir allá.
-% Borra los comentarios cuando escribas el texto.
+
+En la discusión se explica cada una de estas amenazas; aquí solo las enumeramos con la forma de evitarlas.
 
 \begin{itemize}
-  \item % 1. UNA SOLA MÁQUINA, LOCALHOST
-        % DATOS: todo corrió en la PC de Mario por loopback, sin red real.
-        % Los resultados no dicen cómo se comportarían con latencia de red,
-        % pérdidas o ancho de banda limitado; y los nodos compiten por la
-        % misma CPU.
-        % CÓMO EVITARLO: repetir con los nodos en máquinas distintas de una
-        % red local (o contenedores con latencia simulada).
-
-  \item % 2. ENVÍOS LENTOS DE SOCKETS
-        % DATOS: 13 de 4000 envíos de sockets pasaron de 10 ms (máximo 27,6 ms),
-        % en 9 corridas y en las 4 condiciones; con gRPC ninguno pasó de 7,8 ms.
-        % No se identificó la causa. Casi no mueven la mediana ni el p95, pero
-        % ensanchan el intervalo de mensajes por segundo.
-        % Remite a la sección 8: \ref{...} (pon el label de "Los envíos lentos
-        % de sockets" si Mario le agrega uno; si no, "sección 8").
-        % CÓMO EVITARLO: más repeticiones, cerrar otros programas, y medir
-        % dónde se va el tiempo (por ejemplo, registrar por separado el envío,
-        % la espera del acuse y la escritura del CSV) para encontrar la causa.
-
-  \item % 3. ARRANQUE LENTO EN LAMPORT
-        % DATOS: 8 de 30 corridas de Lamport tardaron ~0,5 s (1 de gRPC, 7 de
-        % sockets) porque un nodo intentó conectarse antes de que el otro
-        % abriera su puerto, y en Windows ese intento fallido tarda ~0,5 s.
-        % Es tiempo de arranque, no de convergencia. Ver \ref{sec:discusion-lamport}.
-        % CÓMO EVITARLO: que cada nodo espere a que todos los servidores de la
-        % corrida estén escuchando antes del primer envío (una barrera de
-        % arranque), y medir la convergencia desde ese momento.
-
-  \item % 4. LA RONDA NO COINCIDE CON LA HIPÓTESIS ORIGINAL
-        % DATOS: H4 se escribió pensando en una sola ficha (2, 4 y 6
-        % intercambios). Después se cambió a dos fichas para tener eventos
-        % concurrentes, y eso da 2, 6 y 8 intercambios en las 30 corridas.
-        % CÓMO EVITARLO: cerrar el diseño de la ronda antes de escribir la
-        % hipótesis, o correr también la ronda de una ficha para comparar.
-
-  \item % 5. (OPCIONAL, si quieres agregar una tuya) LA MEDICIÓN INCLUYE ESCRIBIR EL CSV
-        % DATOS: el servidor registra cada recepción en el CSV (con flush)
-        % antes de responder el acuse, así que el RTT incluye esa escritura
-        % en disco. Pasa igual en los dos mecanismos, pero suma tiempo.
-        % CÓMO EVITARLO: responder el acuse primero y registrar después, o
-        % registrar en memoria y escribir al final.
+  \item Todo corrió en una sola máquina, en \emph{localhost}, sin red real. Para evitarlo habría que repetir el experimento en un entorno real, con los nodos en máquinas distintas de una red.
+  \item 13 de los 4000 envíos de sockets pasaron de 10~ms (el máximo fue 27,6~ms) y no identificamos la causa. Ensanchan el intervalo de confianza de los mensajes por segundo. Lo evitaría cerrando procesos pesados en segundo plano durante la prueba, fijando la afinidad y prioridad de CPU de los nodos en el sistema operativo para evitar cambios de contexto bruscos, y haciendo más repeticiones para amortiguar picos aislados del planificador.
+  \item 8 de las 30 corridas de Lamport tardaron cerca de 0,5~s en arrancar, porque un nodo intentó conectarse antes de que el otro abriera su puerto (sección~\ref{sec:discusion-lamport}). Para evitarlo, como se propone en la discusión, cada nodo debería esperar a que todos los servidores estén escuchando antes del primer envío. Ese cambio iría en \texttt{src/comun/nodo.py}.
+  \item La ronda de dos fichas da 2, 6 y 8 intercambios, y la hipótesis esperaba 2, 4 y 6. Lo evitaría fijando primero el diseño exacto de la topología (si la ronda corre con una o con dos fichas simultáneas) antes de redactar la hipótesis, o calculando la predicción teórica de H4 directamente sobre el flujo real de mensajes de las dos fichas antes de ejecutar las corridas.
 \end{itemize}

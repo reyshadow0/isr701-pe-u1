@@ -1,46 +1,5 @@
-% Sección 11 - Verificación de los relojes de Lamport (Dayver)
-% Borra los comentarios cuando escribas el texto.
+Cruzamos los envíos y las recepciones de los 234 CSV de eventos con \texttt{analysis/verificar\_lamport.py}. Cada recepción se empareja con su envío comparando (corrida, origen, reloj\_emisor) de la recepción con (corrida, nodo, reloj) del envío. Se cumplió el 100\,\%: en las 20\,400 recepciones el reloj al recibir es mayor que el reloj al enviar, sin violaciones, sin recepciones sin envío y sin mensajes perdidos (\texttt{analysis/lamport\_resumen.csv} y \texttt{analysis/lamport\_violaciones.csv}).
 
-\subsection{Cómo se verificó}
-% DATOS: el script analysis/verificar_lamport.py lee los 234 CSV de eventos
-% (data/eventos_<mecanismo>_<nodo>_<equipo>_<corrida>.csv) de las 78 corridas.
-% Empareja cada recepción con su envío: una recepción guarda en reloj_emisor el
-% timestamp que traía el mensaje, así que su envío es la fila con
-%   (corrida, nodo, reloj) del envío = (corrida, origen, reloj_emisor) de la recepción.
-% Dentro de un nodo el reloj nunca se repite, por eso esa clave es única.
-% Revisa: que toda recepción tenga su envío, que reloj de la recepción > reloj
-% del envío, que todo envío tenga su recepción y que en cada nodo el reloj suba
-% en cada fila. Verifica los datos reales: no genera valores.
+En la corrida n3-r1 de sockets, nodo-A envía a nodo-B con reloj~1 (hora real 1795365707,206059) y nodo-B envía a nodo-C con reloj~1 (hora real 1795365707,207598). Son concurrentes, porque ninguno había recibido nada del otro: los dos envíos son el primer evento de su nodo. El reloj de Lamport es un número escalar único que solo garantiza una implicación en un sentido: si un evento $a$ causa a $b$, entonces $L(a) < L(b)$, pero lo contrario no siempre se cumple. Como dos eventos concurrentes e independientes (como el envío de A a B y el de B a C antes de recibir mensajes) pueden terminar con el mismo valor de reloj (o uno mayor que el otro sin haber tenido comunicación), el reloj escalar por sí solo no sabe si hubo relación causal o si fueron independientes; para distinguir eso harían falta relojes vectoriales.
 
-\subsection{Resultado}
-% DATOS (de analysis/lamport_resumen.csv y lamport_violaciones.csv):
-% 20 400 recepciones en 78 corridas; las 20 400 cumplen reloj_recepcion >
-% reloj_envio (100 %). Cero recepciones sin envío, cero envíos sin recepción,
-% cero violaciones (lamport_violaciones.csv solo tiene el encabezado).
-% Ojo: son 20 400 porque cuenta también las corridas de latencia (los nodos
-% usan el reloj en todos los modos), no solo las 30 de intercambios.
-
-\subsection{Dos eventos concurrentes con el mismo reloj}
-% DATOS: corrida n3-r1 de sockets (CSV data/eventos_sockets_nodo-A_mcastro_n3-r1.csv
-% y data/eventos_sockets_nodo-B_mcastro_n3-r1.csv):
-%  - nodo-A: envío a nodo-B con reloj 1 (hora_real 1795365707.206059)
-%  - nodo-B: envío a nodo-C con reloj 1 (hora_real 1795365707.207598)
-%  Son los primeros eventos de cada nodo: ninguno había recibido nada, así que
-%  ninguno pudo influir en el otro -> son concurrentes (a || b).
-%  Por la hora real, A envió 1,5 ms antes que B, pero el reloj no lo refleja.
-% POR QUÉ LAMPORT NO LOS DISTINGUE (explícalo tú):
-%  - Lamport garantiza: si a -> b (a causa b), entonces C(a) < C(b).
-%  - Lo contrario no vale: C(a) < C(b) no implica a -> b, y C(a) = C(b) no
-%    dice cuál fue primero. Con el mismo valor solo se sabe que ninguno causó
-%    al otro (si uno causara al otro, su reloj sería menor).
-%  - Es un solo número por evento: no guarda de qué nodos viene la información.
-%    Para distinguir concurrencia de causalidad se necesitan relojes vectoriales.
-%  - Para un orden total se desempata con el nombre del nodo (A antes que B),
-%    pero ese orden es una convención, no lo que pasó.
-
-\subsection{Convergencia}
-% DATOS: no repitas la tabla. Refiere la de la sección 7: \ref{tab:convergencia}.
-% Las 30 corridas convergen; 2, 6 y 8 intercambios con 2, 3 y 4 nodos, con
-% reloj 2, 6 y 8 en todas las repeticiones, porque cada nodo recibe de un solo
-% antecesor por una sola conexión y el orden de los eventos siempre es el mismo.
-% El tiempo sí varía; la explicación está en \ref{sec:discusion-lamport}.
+La convergencia de los relojes está en la tabla~\ref{tab:convergencia} de los resultados.

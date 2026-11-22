@@ -1,0 +1,56 @@
+% Sección 06 - Protocolo experimental (Dayver)
+% Cada bloque "% DATOS:" es lo que tienes que contar con tus palabras.
+% Borra los comentarios cuando escribas el texto.
+
+\subsection{Entorno}
+% DATOS: la corrida oficial se hizo el 22/11/2026 a las 11:40 en la PC de Mario
+% (equipo ReyShadow). Los nodos corrieron como procesos en localhost, puertos
+% 5000 a 5003, sin Docker. Sockets y gRPC nunca corrieron a la vez.
+% Las condiciones las registró src/experimento/condiciones.py y están en la
+% tabla de abajo (no las copies al texto, solo menciona lo principal:
+% Windows 11, Intel Core i7-14700, 63,7 GB de RAM, Python 3.13.15).
+
+\begin{table}[H]
+  \centering
+  \caption{Condiciones de la máquina de la corrida oficial}
+  \label{tab:condiciones}
+  \input{tablas/condiciones}
+\end{table}
+
+\subsection{Corridas}
+% DATOS: un solo comando corre todo:
+%   python -m src.experimento.correr_experimento
+% Son 78 corridas:
+%  - Latencia, 48 corridas: 2 escenarios (secuencial: nodo-B -> nodo-A;
+%    concurrente: nodo-B, nodo-C y nodo-D a la vez -> nodo-A)
+%    x 2 tamaños (100 B y 10 240 B) x 6 repeticiones (r0 a r5) x 2 mecanismos.
+%    Cada cliente hace 100 envíos por corrida y mide el RTT con time.perf_counter().
+%  - Lamport, 30 corridas: 2, 3 y 4 nodos x 5 repeticiones x 2 mecanismos,
+%    20 mensajes en total por corrida en la ronda de dos fichas.
+% Cada corrida tiene una etiqueta (s100-r1, c10240-r3, n3-r2...) que reciben
+% todos sus nodos con --corrida; así los CSV de una corrida se emparejan.
+
+\subsection{Calentamiento y repeticiones}
+% DATOS: r0 es la corrida de calentamiento: se ejecuta igual que las demás
+% pero el análisis la descarta. Por qué: la primera vez se cargan módulos de
+% Python y gRPC, se crean hilos y se llenan cachés, y eso infla los tiempos.
+% Después vienen 5 repeticiones medidas (r1 a r5). La unidad de análisis es
+% cada repetición (ver el criterio de decisión de la sección 2).
+% Lamport no tiene calentamiento porque ahí se verifica corrección, no tiempo.
+
+\subsection{Orden de los mecanismos}
+% DATOS: en cada repetición los dos mecanismos corren uno detrás del otro y se
+% alterna cuál va primero: r0 sockets-gRPC, r1 gRPC-sockets, r2 sockets-gRPC...
+% Por qué: si siempre fuera primero el mismo, podría sacar ventaja o desventaja
+% por el estado del sistema (cachés, otros procesos, temperatura del CPU).
+% No queda perfectamente balanceado: con 5 repeticiones, gRPC va primero en 3
+% (r1, r3, r5) y sockets en 2 (r2, r4).
+
+\subsection{Control de las corridas}
+% DATOS: antes de cada corrida el script revisa que los puertos estén libres y
+% arranca primero el servidor. Al terminar revisa que cada nodo haya dejado su
+% CSV de eventos y cada cliente su CSV con 100 envíos; si algo falta, se detiene.
+% Deja un resumen de las 78 corridas en data/corridas_mcastro_20261122-114039.csv,
+% junta la latencia en data/latency_sockets.csv y data/latency_grpc.csv, y
+% los registros de pantalla en logs/. Después de la corrida se generó
+% data/SHA256SUMS para poder comprobar que los CSV no se modificaron.

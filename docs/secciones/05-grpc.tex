@@ -1,1 +1,37 @@
+
 \subsection{gRPC con Protocol Buffers}
+
+La implementación se dividió en \texttt{server\_grpc.py} y \texttt{client\_grpc.py}. Cada nodo ejecuta su servidor y cliente dentro del mismo proceso, compartiendo una instancia de \texttt{NodoComun} y su reloj de Lamport.
+
+\paragraph{Servidor.}
+El servidor implementa \texttt{SendMessage} y atiende solicitudes mediante gRPC. Antes de aceptar un mensaje, comprueba que el timestamp no sea negativo. Si es válido, llama a \texttt{comun.al\_recibir()} para actualizar el reloj y registrar la recepción.
+
+\begin{lstlisting}[language=Python]
+if request.timestamp < 0:
+    return messaging_pb2.Response(
+        status="error",
+        receiver=self.comun.nombre,
+        detail="timestamp debe ser un entero no negativo"
+    )
+
+self.comun.al_recibir(
+    request.sender,
+    request.timestamp,
+    request.message
+)
+return messaging_pb2.Response(
+    status="ok",
+    receiver=self.comun.nombre
+)
+\end{lstlisting}
+
+\paragraph{Cliente.}
+Se creó la clase \texttt{TransporteGRPC}, que mantiene un diccionario de canales por destino. Cuando necesita comunicarse con otro nodo, abre el canal y espera a que esté disponible mediante \texttt{comun.reintentar()}. Después reutiliza ese canal en los siguientes envíos, evitando establecer una conexión nueva por cada mensaje.
+
+Cada solicitud utiliza los campos definidos en el contrato. El cliente comprueba que el acuse tenga estado \texttt{ok} y que el receptor sea el esperado. Si alguno no coincide, genera un error.
+
+\paragraph{Integración con NodoComun.}
+El módulo compartido controla los argumentos, el reloj de Lamport, los intercambios y el registro de latencia. La implementación gRPC se encarga de transportar los mensajes. Así, sockets TCP y gRPC utilizan el mismo procedimiento experimental.
+
+La integración se comprobó con 40 pruebas unitarias, intercambios entre 2, 3 y 4 nodos y pruebas locales de latencia con mensajes de 100 bytes y 10 KB. Los resultados oficiales se obtuvieron posteriormente en la computadora del responsable del experimento.
+

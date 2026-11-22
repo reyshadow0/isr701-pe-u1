@@ -1,1 +1,13 @@
+
 \subsection{Facilidad de desarrollo, tipado y manejo de errores}
+
+Con sockets TCP fue necesario trabajar directamente con las conexiones y definir cómo enviar y recibir los mensajes JSON. También se tuvo que controlar la lectura de datos, separar cada mensaje y comprobar que los campos recibidos fueran correctos.
+
+En gRPC, el archivo \texttt{messaging.proto} permitió definir los mensajes y generar las clases necesarias para comunicarse. Esto evitó programar manualmente la conversión de cada solicitud, aunque fue necesario generar el código y mantener las versiones de las dependencias.
+
+En cuanto al tipado, JSON necesita validaciones durante la ejecución. Protocol Buffers define los tipos desde el contrato, por ejemplo, \texttt{int64} para el timestamp. Aun así, tuvimos que comprobar que su valor no fuera negativo y que el acuse correspondiera al nodo esperado.
+
+Los dos mecanismos necesitaron controlar errores y tiempos de espera. En sockets se manejaron conexiones interrumpidas y respuestas incompletas, mientras que en gRPC se verificaron los estados de las respuestas y los fallos de las llamadas remotas.
+
+En esta práctica, gRPC facilitó la definición y el intercambio de mensajes. Por su parte, sockets TCP permitió controlar directamente el envío y la recepción, aunque requirió más trabajo para manejar los datos.
+

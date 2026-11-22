@@ -1,0 +1,34 @@
+Cada integrante trabajó en su propia rama y entró a \texttt{main} por un \emph{pull request} revisado. Los enlaces llevan al commit en el repositorio; el detalle de cada día está en \texttt{BITACORA.md}.
+
+\newcommand{\commit}[1]{\href{https://github.com/reyshadow0/isr701-pe-u1/commit/#1}{\texttt{#1}}}
+
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{7.3cm}>{\raggedright\arraybackslash}p{4.9cm}@{}}
+  \caption{Aportes de cada integrante y sus commits}
+  \label{tab:aportes} \\
+  \toprule
+  \textbf{Integrante} & \textbf{Aporte} & \textbf{Commits} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{Integrante} & \textbf{Aporte} & \textbf{Commits} \\
+  \midrule
+  \endhead
+  Castro Coello Mario Sebastián &
+  Estructura del repositorio, plan de trabajo y bitácora. Reloj de Lamport con \texttt{threading.Lock} (\texttt{src/comun/lamport.py}) y sus pruebas. Objetivo, hipótesis y criterio de decisión. Revisión y fusión de los \emph{pull requests}. Corrida oficial en su equipo, datos crudos con \texttt{SHA256SUMS}, script de análisis (\texttt{analysis/analizar.py}), evidencias, y las secciones de resultados, discusión y conclusiones. &
+  \commit{7a14cc6}, \commit{b6438e6}, \commit{aa1a600}, \commit{5e93693}, \commit{36e9064}, \commit{caf1204}, \commit{0b6c1e9}, \commit{154943b}, \commit{3a66697}, \commit{0ec97b3} \\
+  \midrule
+  Loor Suárez Steffanny del Rocío &
+  Servidor y cliente TCP con mensajes JSON por línea, acuses y una conexión por destino (\texttt{src/sockets/}). Integración con la interfaz común y el reloj de Lamport. Primeras mediciones de latencia y evidencias de los tres nodos TCP. Diagrama de la arquitectura. &
+  \commit{27fea0b}, \commit{d7a7f0f}, \commit{12fbe7b}, \commit{8ca71bf}, \commit{109ca32} \\
+  \midrule
+  Quintero Rico Luis David &
+  Contrato del servicio en \texttt{proto/messaging.proto}, código generado, servidor y cliente gRPC con un canal por destino (\texttt{src/grpc/}). Integración con la interfaz común. Secciones del contrato, de gRPC y de facilidad de desarrollo. &
+  \commit{382427e}, \commit{6e61741} \\
+  \midrule
+  Rivas Piloso Dayver Yahir &
+  \texttt{requirements.txt} y registro de las condiciones de la máquina (\texttt{src/experimento/condiciones.py}). Script que corre el protocolo completo (\texttt{correr\_experimento.py}), lógica común de los nodos (\texttt{src/comun/nodo.py}) y verificador de Lamport con el cálculo de convergencia (\texttt{analysis/verificar\_lamport.py}), con sus pruebas. Secciones de protocolo, amenazas a la validez y verificación de Lamport. &
+  \commit{ed71bbd}, \commit{9c28faf}, \commit{ef37a8f}, \commit{e999845}, \commit{f6916bc}, \commit{ed992d7}, \commit{1401826} \\
+  \bottomrule
+\end{longtable}
+}

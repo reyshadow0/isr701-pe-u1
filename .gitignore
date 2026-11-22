@@ -33,3 +33,4 @@ node_modules/
 venv/
 .idea/
 *.egg-info/
+Claude outputs/

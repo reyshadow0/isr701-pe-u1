@@ -46,7 +46,14 @@ más específicas para detectar los errores de conexión y verificaría
 que todos los servidores estuvieran preparados antes de comenzar los intercambios.
 
 \subsubsection*{Quintero Rico Luis David}
-\textit{Pendiente.}
+
+En esta práctica trabajé con gRPC, desde la creación del archivo \texttt{messaging.proto} hasta las pruebas de comunicación entre los nodos. Aprendí que el contrato permite definir los mensajes y sus tipos de datos antes de programar el servidor y el cliente. También facilita la comunicación porque no tenemos que manejar directamente la conversión de los mensajes como ocurre con JSON en sockets.
+
+La parte que más me costó fue adaptar el código inicial a \texttt{NodoComun}. Al principio tenía el servidor y el cliente funcionando por separado, pero después fue necesario unirlos para que compartieran el mismo reloj de Lamport. También tuve que cambiar la forma de manejar las conexiones, porque el cliente abría un canal nuevo en cada envío y eso podía afectar las mediciones.
+
+Otro problema fue configurar Python y las dependencias en mi computadora. Incluso cuando las pruebas unitarias funcionaban, el experimento falló porque los procesos no encontraban gRPC. Después de revisar el entorno pude ejecutar las pruebas con distintos números de nodos.
+
+Si volviera a realizar esta práctica, primero revisaría cómo se van a comunicar los componentes del equipo antes de comenzar a programar. También probaría la integración desde las primeras versiones para evitar tantos cambios al final.
 
 \subsubsection*{Rivas Piloso Dayver Yahir}
 Trabajando con el script del experimento entendí por qué hay que diseñar bien las pruebas si uno quiere mediciones limpias. La corrida de calentamiento \texttt{r0} se descarta para que el arranque en frío no meta retrasos; las cinco repeticiones (\texttt{r1} a \texttt{r5}) dan promedios más estables, y alternar entre sockets y gRPC evita que un mecanismo salga beneficiado por el estado del equipo en ese momento. También me sorprendió lo práctico que es lanzar las 78 corridas desde un solo flujo y comparar los dos protocolos sin tocar nada a mano.

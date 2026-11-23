@@ -1,0 +1,18 @@
+\subsection{Corridas}
+
+Ejecutamos 78 corridas en total con \texttt{python -m src.experimento.correr\_experimento}: 48 de latencia y 30 de los intercambios de Lamport. Las de latencia se hicieron con un cliente y con tres clientes a la vez contra el mismo servidor, con mensajes de 100~bytes y de 10~KB, y en cada una cada cliente hizo 100 envíos. Las de Lamport se hicieron con 2, 3 y 4 nodos y 20 mensajes por corrida.
+
+\subsection{Calentamiento, repeticiones y orden}
+
+Usamos r0 solo como calentamiento y medimos de r1 a r5. En cada repetición corrimos los dos mecanismos uno detrás del otro, alternando el orden (r0, r2 y r4 empiezan con sockets; r1, r3 y r5, con gRPC) para no sesgar los resultados.
+
+\subsection{Condiciones de la máquina}
+
+La corrida oficial se hizo el 22 de noviembre de 2026 en la PC de Mario, con los nodos como procesos en \emph{localhost}. La tabla~\ref{tab:condiciones} muestra las condiciones que registró \texttt{src/experimento/condiciones.py}.
+
+\begin{table}[H]
+  \centering
+  \caption{Condiciones de la máquina de la corrida oficial}
+  \label{tab:condiciones}
+  \input{tablas/condiciones}
+\end{table}

@@ -1,1 +1,10 @@
 \subsection{Amenazas a la validez}
+
+En la discusión se explica cada una de estas amenazas; aquí solo las enumeramos con la forma de evitarlas.
+
+\begin{itemize}
+  \item Todo corrió en una sola máquina, en \emph{localhost}, sin red real. Para evitarlo habría que repetir el experimento en un entorno real, con los nodos en máquinas distintas de una red.
+  \item 13 de los 4000 envíos de sockets pasaron de 10~ms (el máximo fue 27,6~ms) y no identificamos la causa. Ensanchan el intervalo de confianza de los mensajes por segundo. Lo evitaría cerrando procesos pesados en segundo plano durante la prueba, fijando la afinidad y prioridad de CPU de los nodos en el sistema operativo para evitar cambios de contexto bruscos, y haciendo más repeticiones para amortiguar picos aislados del planificador.
+  \item 8 de las 30 corridas de Lamport tardaron cerca de 0,5~s en arrancar, porque un nodo intentó conectarse antes de que el otro abriera su puerto (sección~\ref{sec:discusion-lamport}). Para evitarlo, como se propone en la discusión, cada nodo debería esperar a que todos los servidores estén escuchando antes del primer envío. Ese cambio iría en \texttt{src/comun/nodo.py}.
+  \item La ronda de dos fichas da 2, 6 y 8 intercambios, y la hipótesis esperaba 2, 4 y 6. Lo evitaría fijando primero el diseño exacto de la topología (si la ronda corre con una o con dos fichas simultáneas) antes de redactar la hipótesis, o calculando la predicción teórica de H4 directamente sobre el flujo real de mensajes de las dos fichas antes de ejecutar las corridas.
+\end{itemize}

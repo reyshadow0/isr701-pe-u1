@@ -2,23 +2,19 @@
 
 PE-U1: comunicación entre procesos con sockets TCP y gRPC. Aplicaciones Distribuidas (ISR-701), UTEQ.
 
-Cada integrante escribe solo en su sección y agrega sus entradas al final de ella. Así los PR no chocan al
-fusionarse. La entrada va en el mismo commit que el trabajo que describe.
-
 ## Formato de cada entrada
 
-- **Día dd/mm** — qué hiciste, con tus palabras.
-  - Problemas y cómo los resolviste (si hubo).
-  - Uso de IA: herramienta y para qué (si la usaste).
+Cada entrada lleva el día, lo que hice con palabras propias, los problemas que salieron y cómo se resolvieron, y el uso de IA (qué herramienta y para qué). Cada integrante escribe solo en su sección, y la entrada va en el mismo commit que el trabajo.
 
 ## Decisiones del grupo
-- 18/11: Los nodos corren como procesos en localhost, sin Docker. El enunciado permite las dos opciones, y la red virtual de los contenedores mete variación en las latencias que vamos a medir.
-- 18/11: Puertos: el nodo A usa el 5000, el B el 5001 y el C el 5002. Sockets y gRPC nunca corren a la vez.
+- 18/11: No hubo Docker; los nodos corren como procesos en localhost.
+- 18/11: El nodo A usa el puerto 5000, el B el 5001 y el C el 5002. Sockets y gRPC nunca corren a la vez, para que no compitan por la máquina ni por los puertos.
 - 18/11: Todo se ejecuta con `python -m` desde la raíz del repositorio.
 - 18/11: El código de gRPC se genera desde la raíz con `python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. proto/mensajeria.proto`. Los archivos generados quedan en `proto/`.
-- 18/11: El acuse no cuenta como evento de Lamport. Solo es la respuesta del protocolo que confirma que el mensaje llegó.
+- 18/11: El acuse no cuenta como evento de Lamport. Solo confirma que el mensaje llegó.
 - 18/11: Python 3.13 y versiones fijas en `requirements.txt`: `grpcio==1.85.3`, `grpcio-tools==1.85.3`, `protobuf==7.36.2`, `pandas==3.0.2`, `matplotlib==3.11.2` y `jinja2==3.1.6`. El archivo lo sube Dayver.
 - 18/11: Reparto: Steffanny hace sockets TCP (`steffanny/sockets`), Luis hace gRPC (`luis/grpc`), Dayver el experimento y el `requirements.txt` (`dayver/experimento`) y Mario los relojes de Lamport y el análisis (`mario/lamport-analisis`).
+- 20/11: Se agrega el nodo D en el puerto 5003. Se usa en Lamport con 4 nodos y también como tercer cliente (junto con B y C, enviando a A) en la prueba concurrente de latencia.
 ## Castro Coello Mario Sebastián
 - **Día 18/11** — Con apoyo de Claude Code preparé el repositorio y el plan de trabajo. Hice el commit inicial `7a14cc6` y el push a `main`. Reenvié la invitación de Dayver, que había vencido; a Luis y Steffanny los invité el 09/11. Mandé al grupo el reparto y el plan por día, y los tres lo aceptaron. Instalé los paquetes de Python del proyecto y repasé el reloj de Lamport y `threading.Lock` para mi parte.
   - Al probar el comando de `protoc` dio error porque el `.proto` todavía no existía. Queda pendiente hasta que Luis suba `proto/mensajeria.proto` en su rama.
@@ -31,6 +27,10 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
 - **Día 22/11** — Hice la corrida oficial en mi PC con `correr_experimento.py` y el equipo `mcastro`: 78 corridas, todas en `ok`. Incluye latencia con 1 y 3 clientes, mensajes de 100 B y 10 KB, la corrida de calentamiento `r0` y 5 repeticiones, y los 20 intercambios de Lamport con 2, 3 y 4 nodos. Subí los CSV crudos sin editar a `data/` con su `SHA256SUMS` en un commit aparte, y agregué `.gitattributes` para que Git no cambie los saltos de línea de los CSV y las huellas coincidan en cualquier PC. Agregué `analysis/analizar.py`, que lee los CSV de `data/`, descarta el calentamiento, saca media, mediana, desviación estándar, p95 y mensajes por segundo de cada repetición, aplica el criterio de decisión de H1, H2 y H3 y deja las tablas en `docs/tablas/` y el boxplot y el gráfico de barras con intervalos en `docs/figuras/`. Con los datos reales H1 y H2 se cumplen y H3 no. Corrí `verificar_lamport.py` de Dayver: las 20 400 recepciones tienen reloj mayor que su envío y no hay mensajes perdidos. Tomé tres capturas en mi equipo: tres nodos con gRPC, tres nodos con TCP y la ejecución del análisis.
   - Problemas: la primera versión del análisis contaba como repeticiones las dos corridas de prueba de Steffanny, así que ahora se ignoran cuando ya hay corridas oficiales. La convergencia dio 2, 6 y 8 intercambios y no 2, 4 y 6 como dice la hipótesis, porque la ronda final usa dos fichas. Además, en 8 de las 30 corridas de Lamport el tiempo sube a unos 0,5 s porque un nodo intentó conectarse antes de que el otro abriera su puerto. No cambié la hipótesis; las dos cosas van a la discusión y a las amenazas a la validez.
   - Uso de IA: Claude (Opus 5.5) en la app de Claude, conectado a la carpeta del repositorio. Escribió `analysis/analizar.py` y me guió con los comandos de la corrida, del `SHA256SUMS` y de las capturas. También revisó los datos y encontró lo de las corridas de prueba, la convergencia con dos fichas y los 0,5 s de arranque. Yo corrí todo en mi PC, revisé las salidas y las figuras, y hice los commits.
+
+- **Día 22/11 (tarde)** — Agregué la sexta referencia y escribí el README. Arreglé SHA256SUMS, porque los saltos de línea de Windows cambiaban las huellas SHA-256 de los datos crudos; solo fallaban los dos CSV de prueba de Steffanny. Fusioné los PR del grupo. Arreglé el TikZ y los desbordes del informe. Escribí mi conclusión individual.
+  - Problemas: el de los saltos de línea, que descubrimos al verificar las huellas de la corrida oficial. También el PR #11 al revés, el informe que no compilaba por TikZ, los dos desbordes y el párrafo de Jarmoszewicz.
+  - Uso de IA: Claude detectó el problema de los hashes. Para la conclusión, la redacté a partir de mis notas, Claude lo contrasto, y la revisé yo de nuevo que no haya cambiado nada. Herramienta: Claude Code con Sonnet 5 y después Opus 5.5. Lo demás que hizo Claude esta tarde: TikZ y desbordes, lectura del artículo, referencias con doi.org, prueba del README, corrida de prueba aparte, mensajes al grupo y revisión de la bitácora.
 
 ## Loor Suárez Steffanny del Rocío
 - **Día 19/11** - Implementé el servidor TCP dentro de src/sockets/server.py. Configuré el nombre del nodo y el puerto mediante argumentos, la recepción de mensajes JSON y la validación de los campos sender, timestamp y message. También agregué el envío de acuses y el uso de hilos para atender conexiones.

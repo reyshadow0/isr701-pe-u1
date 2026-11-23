@@ -1,1 +1,20 @@
+
 \subsection{Contrato del servicio gRPC}
+
+Para la comunicación mediante gRPC se definió el servicio \texttt{MessagingService} en el archivo \texttt{proto/messaging.proto}. Este contiene el método \texttt{SendMessage}, que recibe un mensaje de un nodo y devuelve un acuse de recepción.
+
+El mensaje \texttt{Request} incluye \texttt{sender}, que identifica al emisor; \texttt{timestamp}, que lleva el valor del reloj de Lamport; y \texttt{message}, que contiene el texto enviado. La respuesta \texttt{Response} devuelve el estado, el nodo receptor y un detalle cuando ocurre un error.
+
+\lstinputlisting[
+  caption={Contrato del servicio gRPC},
+  label={lst:messaging}
+]{../proto/messaging.proto}
+
+Las clases de los mensajes y las interfaces de comunicación se generaron con \texttt{grpcio-tools}, ejecutando desde la raíz del repositorio:
+
+\begin{lstlisting}
+python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. proto/messaging.proto
+\end{lstlisting}
+
+Este comando genera \texttt{messaging\_pb2.py} y \texttt{messaging\_pb2\_grpc.py} dentro de \texttt{proto/}. El primero contiene los mensajes definidos y el segundo las clases que utilizan el cliente y el servidor.
+

@@ -67,6 +67,10 @@ fusionarse. La entrada va en el mismo commit que el trabajo que describe.
   - Problemas: al principio los nodos fallaron porque no encontraban el módulo grpc. Revisé el entorno virtual y las dependencias, comprobé que grpcio estaba disponible y repetí las pruebas hasta completarlas correctamente.
   - Uso de IA: utilicé ChatGPT (GPT-6) para revisar la integración de gRPC con NodoComun y corregir la estructura del cliente y servidor. Comprobé los cambios ejecutando las pruebas unitarias y el script de experimentos en mi computadora.
 
+- **Día 22/11** — Completé la documentación del contrato gRPC y expliqué cómo se generan los archivos desde el proto. También describí el funcionamiento del servidor, el cliente y la integración con NodoComun. En la comparación con sockets revisé las diferencias en el manejo de mensajes, tipos de datos y errores, sin repetir las mediciones.
+  - Pruebas: revisé que las explicaciones coincidieran con el código del repositorio y compilé el informe en LaTeX.
+  - Uso de IA: utilicé ChatGPT (GPT-6) para preparar un borrador de las secciones y contrastarlo con la implementación. Revisé y ajusté la redacción antes de incorporarla.
+
 
 
 ## Rivas Piloso Dayver Yahir

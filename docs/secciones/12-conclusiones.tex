@@ -16,7 +16,8 @@ Todo esto se midió en una sola máquina y sin red real. Con una red de verdad, 
 % qué aprendió, qué le costó, qué haría distinto. Borrar la línea "Pendiente" al escribirla.
 
 \subsubsection*{Castro Coello Mario Sebastián}
-\textit{Pendiente.}
+Mi parte en esta práctica fue coordinar al grupo, tomar las decisiones de diseño (nodos en localhost sin Docker, puertos fijos, el acuse fuera de los eventos de Lamport), revisar y fusionar los PR, hacer mis commits y ejecutar la corrida oficial en mi PC: 78 corridas en unos 88 segundos, todas en ok. El código del reloj de Lamport y sus pruebas los generó Claude, y yo los revisé en el PR. Esa revisión dejó tres versiones por fallas concretas: el CSV se sobrescribía entre corridas, podía haber dos relojes del mismo nodo y no se validaban los nombres. Los dos errores del análisis, las corridas de prueba de Steffanny contadas por error y los saltos de línea de Windows que cambiaban los SHA-256, también los detectó Claude.
+H1 y H2 se cumplieron: con 100 B y un cliente, sockets tuvo una mediana de 0,045 ms y gRPC de 0,291 ms. H3 no se cumplió, porque con tres clientes las medianas subieron casi igual. H4 tampoco. La convergencia dio 2, 6 y 8 intercambios por las dos fichas, y en tiempo los rangos se traslapan por 8 corridas de más de medio segundo. Aprendí a medir con calentamiento y repeticiones, que la mediana aguanta mejor los envíos lentos que la media, y que dos eventos concurrentes pueden tener el mismo valor de Lamport. La próxima vez haría que los nodos esperen a que todos los servidores estén escuchando antes del primer envío.
 
 \subsubsection*{Loor Suárez Steffanny del Rocío}
 Durante esta práctica pude comprender mejor cómo funciona la

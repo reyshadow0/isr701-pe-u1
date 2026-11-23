@@ -19,7 +19,29 @@ Todo esto se midió en una sola máquina y sin red real. Con una red de verdad, 
 \textit{Pendiente.}
 
 \subsubsection*{Loor Suárez Steffanny del Rocío}
-\textit{Pendiente.}
+Durante esta práctica pude comprender mejor cómo funciona la
+comunicación entre procesos mediante sockets TCP y cómo
+se relaciona con los sistemas distribuidos.
+Mi participación en esta tarea se centró en desarrollar el servidor y
+el cliente TCP, comprobar el intercambio de mensajes e
+integrar esta comunicación con el reloj lógico de Lamport.
+Con ello entendí que no basta con enviar información,
+sino que también es necesario validar los datos y confirmar su
+recepción y controlar las conexiones.
+
+Una de las dificultades que encontré fue conseguir que los
+procesos se comunicaran correctamente y manejar los errores
+que podían aparecer cuando un nodo todavía no estaba disponible.
+También tuve que revisar el funcionamiento de los mensajes de
+confirmación y comprobar que la integración con el reloj de Lamport
+mantuviera el orden lógico de los eventos.
+
+Puedo dar como conclusión de esta práctica que según los resultados
+TCP puede ofrecer una latencia menor que gRPC en las condiciones
+evaluadas, aunque eso no significa que siempre sea la mejor alternativa.
+Si volviera a realizar esta práctica, organizaría desde el inicio pruebas
+más específicas para detectar los errores de conexión y verificaría
+que todos los servidores estuvieran preparados antes de comenzar los intercambios.
 
 \subsubsection*{Quintero Rico Luis David}
 \textit{Pendiente.}

@@ -1,1 +1,78 @@
 \subsection{Sockets TCP}
+
+Para implementar la comunicación mediante sockets TCP se
+desarrolló un servidor y un cliente en Python, utilizando
+el módulo \texttt{socket}, aqui cada nodo se ejecuta como un proceso
+independiente y dispone de ambos componentes lo que permite
+enviar y recibir mensajes durante las pruebas.
+
+\subsubsection{Servidor TCP}
+
+El servidor se encarga de escuchar las conexiones entrantes
+en la dirección \texttt{127.0.0.1} y en el puerto asignado
+a cada nodo. Cuando recibe una conexión crea un hilo para
+atenderla de modo que puede gestionar varias conexiones
+sin detener la aceptación de nuevos clientes.
+
+Los mensajes se reciben en formato JSON y separados por
+saltos de línea. Antes de procesarlos el servidor comprueba
+que contengan los campos \texttt{sender}, \texttt{timestamp}
+y \texttt{message}, con los tipos de datos esperados.
+
+Si el mensaje es válido, se entrega a la lógica común
+del nodo y se devuelve una confirmación con el estado
+\texttt{ok}. Cuando se detecta un formato incorrecto
+el servidor responde con un estado de error.
+
+\subsubsection{Cliente TCP}
+
+El cliente establece una conexión TCP con el nodo de destino
+y la conserva para reutilizarla en los siguientes envíos.
+Esta decisión evita crear una nueva conexión por cada mensaje
+y permite mantener el mismo criterio durante las pruebas
+de comunicación.
+
+Cada mensaje contiene el identificador del emisor, la marca
+de tiempo lógica de Lamport y el contenido que se desea
+transmitir. Después del envío el cliente espera la
+confirmación del receptor y verifica que corresponda
+al destino esperado.
+
+Si la conexión inicial falla, el programa utiliza el
+mecanismo de reintentos definido en la lógica común.
+Al finalizar la ejecución, se cierran las conexiones
+que permanecen abiertas.
+
+\subsubsection{Integración con el reloj de Lamport}
+
+La implementación TCP utiliza la clase \texttt{NodoComun},
+la cual centraliza las operaciones compartidas con gRPC.
+Antes de enviar un mensaje, esta clase actualiza el reloj
+lógico y proporciona la marca de tiempo que debe
+transmitirse.
+
+Cuando se recibe un mensaje su marca de tiempo se utiliza
+para actualizar el reloj local. En el modo de intercambio
+Lamport, los mensajes entrantes se almacenan primero en
+una cola y posteriormente son procesados por el hilo
+principal del nodo, respetando el orden de llegada.
+
+Las confirmaciones TCP se utilizan para comprobar la
+recepción de los mensajes pero no se registran como
+eventos adicionales del reloj de Lamport.
+
+\subsubsection{Registro de latencia}
+
+Para las pruebas de rendimiento se mide el tiempo de ida
+y vuelta (\textit{Round-Trip Time}, RTT) desde el envío
+del mensaje hasta la recepción de su confirmación.
+
+La medición se realiza mediante
+\texttt{time.perf\_counter()}, y los resultados se
+almacenan en archivos CSV. Cada registro incluye
+información del mecanismo, escenario, tamaño del mensaje,
+corrida, nodo, número de envío y latencia en milisegundos.
+
+Este procedimiento permite comparar los resultados
+obtenidos mediante sockets TCP con los de gRPC
+utilizando la misma lógica experimental.

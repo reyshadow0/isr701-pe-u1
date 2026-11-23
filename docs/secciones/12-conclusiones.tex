@@ -47,4 +47,8 @@ que todos los servidores estuvieran preparados antes de comenzar los intercambio
 \textit{Pendiente.}
 
 \subsubsection*{Rivas Piloso Dayver Yahir}
-\textit{Pendiente.}
+Trabajando con el script del experimento entendí por qué hay que diseñar bien las pruebas si uno quiere mediciones limpias. La corrida de calentamiento \texttt{r0} se descarta para que el arranque en frío no meta retrasos; las cinco repeticiones (\texttt{r1} a \texttt{r5}) dan promedios más estables, y alternar entre sockets y gRPC evita que un mecanismo salga beneficiado por el estado del equipo en ese momento. También me sorprendió lo práctico que es lanzar las 78 corridas desde un solo flujo y comparar los dos protocolos sin tocar nada a mano.
+
+En la verificación de Lamport crucé cada recepción con su envío y comprobé que las 20\,400 recepciones respetan el orden lógico. Pero el caso \texttt{n3-r1} en sockets me mostró el límite del método: si dos nodos envían mensajes independientes con reloj~1 sin haber recibido nada antes, el reloj escalar no permite saber si hubo causalidad o si los eventos fueron concurrentes.
+
+Lo que más me costó fue preparar el entorno de Python desde cero, resolver los bloqueos y errores con las ramas de Git, coordinar la interfaz con el equipo y entender por qué la ronda de dos fichas daba 2, 6 y 8 intercambios, cuando la hipótesis decía otra cosa. Para la próxima entrega empezaría con más tiempo, definiría la topología de la ronda antes de escribir la hipótesis y pondría una barrera de arranque para evitar los retrasos iniciales de conexión.
